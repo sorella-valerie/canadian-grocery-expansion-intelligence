@@ -1,3 +1,3 @@
-# Global cost-of-living and opportunity explorer
+# World Bank country opportunity indicators
 
-Standalone local Streamlit screening dashboard using the World Bank Indicators API.
+Standalone Streamlit dashboard using official World Bank Indicators API observations. Countries are ordered by one user-selected official indicator. The dashboard does not create or display a composite score.

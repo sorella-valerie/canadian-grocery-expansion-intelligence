@@ -12,7 +12,7 @@ Six interactive Streamlit dashboards that turn official public data and clearly 
 | Newcomer settlement navigator | Which Canadian cities best match a household and occupation scenario? | [Open](https://canada-newcomer-settlement.streamlit.app/) |
 | Canadian food affordability | Which products and provinces are driving grocery pressure? | [Open](https://canada-food-affordability.streamlit.app/) |
 | Nonprofit sustainability | How do revenue, expenses and reserves affect financial runway? | [Open](https://nonprofit-sustainability.streamlit.app/) |
-| Global cost and opportunity | Which countries align with a selected relocation priority? | [Open](https://global-cost-opportunity.streamlit.app/) |
+| World Bank country indicators | How do countries compare on official GDP per capita, unemployment, inflation and health expenditure indicators? | [Open](https://global-cost-opportunity.streamlit.app/) |
 
 ## What this portfolio demonstrates
 

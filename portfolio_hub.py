@@ -11,7 +11,7 @@ projects = [
     ("Newcomer settlement navigator", "Rank Canadian cities using household costs, local wages, and healthcare access.", "https://canada-newcomer-settlement.streamlit.app/", "travel_explore"),
     ("Canadian food affordability monitor", "See provincial grocery burden, price changes, and product-level pressure.", "https://canada-food-affordability.streamlit.app/", "shopping_basket"),
     ("Nonprofit sustainability dashboard", "Stress-test funding, expense growth, cash runway, and sector employment.", "https://nonprofit-sustainability.streamlit.app/", "volunteer_activism"),
-    ("Global cost & opportunity explorer", "Screen twenty countries using purchasing power, jobs, inflation, and health investment.", "https://global-cost-opportunity.streamlit.app/", "public"),
+    ("World Bank country indicators", "Compare twenty countries using official GDP per capita, unemployment, inflation and health expenditure indicators.", "https://global-cost-opportunity.streamlit.app/", "public"),
 ]
 
 for row in (projects[:3], projects[3:]):
