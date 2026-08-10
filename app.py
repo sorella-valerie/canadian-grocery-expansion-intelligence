@@ -196,36 +196,58 @@ with st.container(horizontal=True):
     st.metric("Weekly basket", f"${selected['Basket cost']:,.2f}", border=True)
     st.metric("Sales per capita", f"${selected['Sales per capita']:,.0f}", border=True)
 
+runner_up = market.iloc[1]
+score_gap = leader["Opportunity score"] - runner_up["Opportunity score"]
+st.subheader("1. Find the strongest market")
+st.caption(
+    f"{leader['Geography']} ranks first, {score_gap:.1f} points ahead of {runner_up['Geography']}. "
+    "The ranking changes when you adjust the strategy weights in the sidebar."
+)
+
 map_col, driver_col = st.columns([1.6, 1], gap="medium")
 with map_col:
     with st.container(border=True, height=430):
-        st.subheader("Where opportunity concentrates")
-        st.caption("Bubble size and colour reflect the weighted opportunity score; select a province from the sidebar for its diagnostic.")
-        map_chart = (
-            alt.Chart(display_market)
-            .mark_circle(opacity=0.88, stroke="white", strokeWidth=2)
+        st.subheader("Expansion opportunity ranking")
+        st.caption("Longer bars indicate a stronger overall fit across growth, demand, income and affordability.")
+        rank_data = display_market.sort_values("Opportunity score", ascending=True).copy()
+        rank_data["Highlight"] = np.where(
+            rank_data["Geography"].eq(province),
+            "Selected province",
+            np.where(rank_data["Rank"].eq(1), "Scenario leader", "Other provinces"),
+        )
+        ranking_chart = (
+            alt.Chart(rank_data)
+            .mark_bar(cornerRadiusEnd=5, height=18)
             .encode(
-                longitude=alt.Longitude("Longitude:Q"),
-                latitude=alt.Latitude("Latitude:Q"),
-                size=alt.Size("Opportunity score:Q", scale=alt.Scale(range=[500, 2600]), legend=None),
-                color=alt.Color("Opportunity score:Q", scale=alt.Scale(domain=[0, 50, 100], range=[CORAL, GOLD, TEAL]), legend=None),
+                y=alt.Y("Geography:N", sort=alt.SortField("Opportunity score", order="descending"), title=None),
+                x=alt.X("Opportunity score:Q", scale=alt.Scale(domain=[0, 100]), title="Opportunity score (0–100)"),
+                color=alt.Color(
+                    "Highlight:N",
+                    scale=alt.Scale(
+                        domain=["Scenario leader", "Selected province", "Other provinces"],
+                        range=[TEAL, CORAL, "#CBD1CF"],
+                    ),
+                    legend=None,
+                ),
                 tooltip=[
                     alt.Tooltip("Geography:N", title="Province"),
                     alt.Tooltip("Rank:Q", title="Rank"),
                     alt.Tooltip("Opportunity score:Q", title="Score", format=".1f"),
-                    alt.Tooltip("Population growth:Q", title="Population growth", format=".1%"),
-                    alt.Tooltip("Basket burden:Q", title="Annual basket burden", format=".1%"),
                 ],
             )
             .properties(height=300)
-            .project(type="mercator", center=[-96, 57], scale=380)
         )
-        st.altair_chart(map_chart)
+        score_labels = alt.Chart(rank_data).mark_text(align="left", dx=6, fontSize=11, color=INK).encode(
+            y=alt.Y("Geography:N", sort=alt.SortField("Opportunity score", order="descending")),
+            x="Opportunity score:Q",
+            text=alt.Text("Opportunity score:Q", format=".1f"),
+        )
+        st.altair_chart(ranking_chart + score_labels)
 
 with driver_col:
     with st.container(border=True, height=430):
         st.subheader(f"Why {province} ranks #{selected['Rank']}")
-        st.caption("Four normalized components explain the composite score.")
+        st.caption("The tallest bar is this market's clearest advantage; the shortest is its key weakness.")
         driver_data = pd.DataFrame(
             {
                 "Component": ["Population momentum", "Demand", "Purchasing power", "Affordability opportunity"],
@@ -244,6 +266,9 @@ with driver_col:
             .properties(height=220)
         )
         st.altair_chart(driver_chart)
+
+st.subheader("2. Test demand and affordability risk")
+st.caption("A strong market needs both customer growth and grocery spending, with a clear plan for the products creating price pressure.")
 
 frontier_col, pressure_col = st.columns([1.35, 1], gap="medium")
 with frontier_col:
@@ -288,6 +313,10 @@ with frontier_col:
         growth_rule = alt.Chart(pd.DataFrame({"Population growth": [median_growth]})).mark_rule(color=SLATE, strokeDash=[5, 5], opacity=0.65).encode(x="Population growth:Q")
         demand_rule = alt.Chart(pd.DataFrame({"Sales per capita": [median_demand]})).mark_rule(color=SLATE, strokeDash=[5, 5], opacity=0.65).encode(y="Sales per capita:Q")
         st.altair_chart(scatter + growth_rule + demand_rule + labels)
+        frontier_names = ", ".join(
+            frontier_data.loc[frontier_data["Market position"].eq("High growth + high demand"), "ProvinceCode"]
+        )
+        st.caption(f"**Above both medians:** {frontier_names}. These markets show the clearest combination of momentum and demand.")
 
 with pressure_col:
     pressure, current_date, prior_date = price_pressure(frames, province)
@@ -307,9 +336,15 @@ with pressure_col:
             .properties(height=320)
         )
         st.altair_chart(pressure_chart)
+        top_pressure = pressure_display.iloc[0]
+        direction = "increased" if top_pressure["Weighted annual change"] >= 0 else "reduced"
+        st.caption(
+            f"**Biggest basket mover:** {top_pressure['Product']} {direction} the weighted basket by "
+            f"${abs(top_pressure['Weighted annual change']):.2f}."
+        )
 
-st.subheader("Ranked market decision table")
-st.caption("Use the component bars to see whether each market wins on momentum, demand, household purchasing power or affordability pressure.")
+st.subheader("3. Compare the evidence before committing")
+st.caption("The full ranking shows whether each province's score is balanced or depends heavily on one advantage.")
 table = market[["Rank", "Geography", "Region", "Opportunity score", "Population momentum", "Demand", "Purchasing power", "Affordability opportunity", "Basket burden"]].copy()
 st.dataframe(
     table,
