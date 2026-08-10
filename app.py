@@ -183,7 +183,7 @@ leader = market.iloc[0]
 
 st.caption("NORTHSTAR FOODS  /  STRATEGY & EXPANSION")
 st.title("Canadian grocery affordability & market expansion intelligence")
-st.caption("Built from four official Statistics Canada tables. Observed population, retail sales, income and food prices are kept separate from the adjustable portfolio scenario score.")
+st.caption("Official Statistics Canada population, grocery sales, income and food-price data—combined into an adjustable scenario score for comparing provincial opportunities.")
 st.markdown(
     f"**{leader['Geography']} leads the current expansion scenario** with an opportunity score of "
     f"**{leader['Opportunity score']:.1f}/100**. Select a province to understand the trade-off between growth, demand, purchasing power and affordability pressure."
@@ -250,28 +250,43 @@ with driver_col:
 frontier_col, pressure_col = st.columns([1.35, 1], gap="medium")
 with frontier_col:
     with st.container(border=True, height=460):
-        st.subheader("Which provinces combine fast growth with strong grocery spending?")
-        st.caption("Each bubble is a province. Move right for faster population growth and up for more grocery spending per resident. The upper-right quadrant is the strongest expansion position.")
-        scatter = (
-            alt.Chart(display_market)
-            .mark_circle(opacity=0.82, stroke="white", strokeWidth=1.5)
-            .encode(
-                x=alt.X("Population growth:Q", axis=alt.Axis(format=".1%"), title="Population growth"),
-                y=alt.Y("Sales per capita:Q", axis=alt.Axis(format="$,.0f"), title="Grocery sales per capita"),
-                size=alt.Size("Population:Q", scale=alt.Scale(range=[180, 1800]), legend=None),
-                color=alt.Color("Basket burden:Q", scale=alt.Scale(scheme="yelloworangered"), legend=alt.Legend(title="Basket burden")),
-                tooltip=[
-                    alt.Tooltip("Geography:N", title="Province"),
-                    alt.Tooltip("Population growth:Q", format=".1%"),
-                    alt.Tooltip("Sales per capita:Q", format="$,.0f"),
-                    alt.Tooltip("Basket burden:Q", format=".1%"),
-                ],
-            )
-            .properties(height=320)
-        )
-        labels = alt.Chart(display_market).mark_text(dy=-13, fontSize=11, color=INK).encode(x="Population growth:Q", y="Sales per capita:Q", text="ProvinceCode:N")
+        st.subheader("Growth and grocery demand")
+        st.caption("The strongest expansion signals sit above and to the right of the dashed provincial medians.")
         median_growth = float(display_market["Population growth"].median())
         median_demand = float(display_market["Sales per capita"].median())
+        frontier_data = display_market.copy()
+        frontier_data["Market position"] = np.where(
+            (frontier_data["Population growth"] >= median_growth)
+            & (frontier_data["Sales per capita"] >= median_demand),
+            "High growth + high demand",
+            "Other provinces",
+        )
+        scatter = (
+            alt.Chart(frontier_data)
+            .mark_circle(size=150, opacity=0.95, stroke="white", strokeWidth=2)
+            .encode(
+                x=alt.X("Population growth:Q", axis=alt.Axis(format=".1%"), title="Annual population growth →"),
+                y=alt.Y("Sales per capita:Q", axis=alt.Axis(format="$,.0f"), title="Grocery sales per resident →"),
+                color=alt.Color(
+                    "Market position:N",
+                    scale=alt.Scale(
+                        domain=["High growth + high demand", "Other provinces"],
+                        range=[TEAL, "#A9B2B0"],
+                    ),
+                    legend=alt.Legend(title=None, orient="bottom"),
+                ),
+                tooltip=[
+                    alt.Tooltip("Geography:N", title="Province"),
+                    alt.Tooltip("Population growth:Q", title="Annual growth", format=".1%"),
+                    alt.Tooltip("Sales per capita:Q", title="Sales per resident", format="$,.0f"),
+                    alt.Tooltip("Market position:N", title="Signal"),
+                ],
+            )
+            .properties(height=300)
+        )
+        labels = alt.Chart(frontier_data).mark_text(dy=-13, fontSize=11, fontWeight=600, color=INK).encode(
+            x="Population growth:Q", y="Sales per capita:Q", text="ProvinceCode:N"
+        )
         growth_rule = alt.Chart(pd.DataFrame({"Population growth": [median_growth]})).mark_rule(color=SLATE, strokeDash=[5, 5], opacity=0.65).encode(x="Population growth:Q")
         demand_rule = alt.Chart(pd.DataFrame({"Sales per capita": [median_demand]})).mark_rule(color=SLATE, strokeDash=[5, 5], opacity=0.65).encode(y="Sales per capita:Q")
         st.altair_chart(scatter + growth_rule + demand_rule + labels)
