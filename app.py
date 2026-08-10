@@ -198,7 +198,7 @@ with st.container(horizontal=True):
 
 runner_up = market.iloc[1]
 score_gap = leader["Opportunity score"] - runner_up["Opportunity score"]
-st.subheader("1. Find the strongest market")
+st.subheader("Where should Northstar expand?")
 st.caption(
     f"{leader['Geography']} ranks first, {score_gap:.1f} points ahead of {runner_up['Geography']}. "
     "The ranking changes when you adjust the strategy weights in the sidebar."
@@ -267,10 +267,10 @@ with driver_col:
         )
         st.altair_chart(driver_chart)
 
-st.subheader("2. Test demand and affordability risk")
+st.subheader("Pressure-test the opportunity")
 st.caption("A strong market needs both customer growth and grocery spending, with a clear plan for the products creating price pressure.")
 
-frontier_col, pressure_col = st.columns([1.35, 1], gap="medium")
+frontier_col, pressure_col = st.columns([1.15, 1], gap="medium")
 with frontier_col:
     with st.container(border=True, height=460):
         st.subheader("Growth and grocery demand")
@@ -321,29 +321,34 @@ with frontier_col:
 with pressure_col:
     pressure, current_date, prior_date = price_pressure(frames, province)
     with st.container(border=True, height=460):
-        st.subheader("Products driving basket pressure")
-        st.caption(f"Weighted contribution to basket change, {prior_date:%b %Y}–{current_date:%b %Y}.")
+        st.subheader("What changed the weekly basket?")
+        st.caption(f"Dollar impact by product in {province}, {prior_date:%b %Y} to {current_date:%b %Y}.")
         pressure_display = pressure.head(8).copy()
-        pressure_chart = (
-            alt.Chart(pressure_display)
-            .mark_bar(cornerRadiusEnd=4)
-            .encode(
-                y=alt.Y("Product:N", sort="-x", title=None, axis=alt.Axis(labelLimit=175)),
-                x=alt.X("Weighted annual change:Q", title="Weighted basket change ($)"),
-                color=alt.condition("datum['Weighted annual change'] >= 0", alt.value(CORAL), alt.value(TEAL)),
-                tooltip=["Product", alt.Tooltip("Price change:Q", format="+.1%"), alt.Tooltip("Weighted annual change:Q", format="$+.2f")],
-            )
-            .properties(height=320)
+        pressure_display["Product label"] = pressure_display["Product"].str.split(",").str[0]
+        pressure_display["Price direction"] = np.where(
+            pressure_display["Weighted annual change"] >= 0,
+            "Raised basket cost",
+            "Lowered basket cost",
         )
-        st.altair_chart(pressure_chart)
-        top_pressure = pressure_display.iloc[0]
+        pressure_display = pressure_display.sort_values("Weighted annual change", ascending=True)
+        st.bar_chart(
+            pressure_display,
+            x="Product label",
+            y="Weighted annual change",
+            horizontal=True,
+            color=CORAL,
+            x_label="Weekly basket impact ($)",
+            y_label="",
+            height=285,
+        )
+        top_pressure = pressure_display.loc[pressure_display["Weighted annual change"].abs().idxmax()]
         direction = "increased" if top_pressure["Weighted annual change"] >= 0 else "reduced"
         st.caption(
             f"**Biggest basket mover:** {top_pressure['Product']} {direction} the weighted basket by "
             f"${abs(top_pressure['Weighted annual change']):.2f}."
         )
 
-st.subheader("3. Compare the evidence before committing")
+st.subheader("Compare the evidence")
 st.caption("The full ranking shows whether each province's score is balanced or depends heavily on one advantage.")
 table = market[["Rank", "Geography", "Region", "Opportunity score", "Population momentum", "Demand", "Purchasing power", "Affordability opportunity", "Basket burden"]].copy()
 st.dataframe(
