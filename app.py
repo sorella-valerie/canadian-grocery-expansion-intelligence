@@ -128,10 +128,13 @@ def build_market_scores(frames, weights):
     return market.sort_values("Rank"), latest_food_date, latest_income_year, retail_end
 
 
-def price_pressure(frames, province):
+def price_pressure(frames, province=None):
     food = frames["FactFoodPrices"]
     products = frames["DimProduct"][["Product", "BasketCategory", "BasketWeight"]]
-    p = food[food["Geography"].eq(province)].copy()
+    if province is None:
+        p = food.groupby(["Date", "Product"], as_index=False)["Price"].mean()
+    else:
+        p = food[food["Geography"].eq(province)].copy()
     latest = p["Date"].max()
     prior_target = latest - pd.DateOffset(years=1)
     prior_date = p.loc[p["Date"] <= prior_target, "Date"].max()
@@ -175,7 +178,7 @@ with st.sidebar:
     if viewing_all:
         comparison = "All provinces"
         display_market = market
-        st.caption(f"National view. Detail cards use {province}, the current scenario leader.")
+        st.caption("National view across all comparable provinces.")
     else:
         comparison = st.segmented_control("Comparison", ["All provinces", "Regional peers"], default="All provinces")
     if not viewing_all and comparison == "Regional peers":
@@ -194,7 +197,7 @@ st.caption("Official Statistics Canada population, grocery sales, income and foo
 if viewing_all:
     st.markdown(
         f"**{leader['Geography']} leads the current expansion scenario** with an opportunity score of "
-        f"**{leader['Opportunity score']:.1f}/100**. The national view compares all ten provinces, while the detail cards explain the current leader."
+        f"**{leader['Opportunity score']:.1f}/100**. The national view summarizes all ten provinces."
     )
 else:
     st.markdown(
@@ -202,39 +205,20 @@ else:
         f"**{leader['Opportunity score']:.1f}/100**. The detail cards below explain {province}'s strengths, constraints and affordability pressure."
     )
 
-population_spark = frames["FactPopulation"].loc[
-    frames["FactPopulation"]["Geography"].eq(province)
-].sort_values("Date").tail(8)["Population"].tolist()
-sales_spark = frames["FactRetailSales"].loc[
-    frames["FactRetailSales"]["Geography"].eq(province)
-].sort_values("Date").tail(12)["RetailSalesThousands"].tolist()
-basket_spark = (
-    frames["FactFoodPrices"].loc[frames["FactFoodPrices"]["Geography"].eq(province)]
-    .merge(frames["DimProduct"][["Product", "BasketWeight"]], on="Product", how="inner")
-    .assign(WeightedPrice=lambda data: data["Price"] * data["BasketWeight"])
-    .groupby("Date", as_index=False)["WeightedPrice"].sum()
-    .sort_values("Date").tail(12)["WeightedPrice"].tolist()
-)
-
 with st.container(horizontal=True):
-    st.metric(
-        "Opportunity score", f"{selected['Opportunity score']:.1f} / 100",
-        f"Rank #{selected['Rank']} in Canada", delta_color="off", border=True,
-        chart_data=[selected["Population momentum"], selected["Demand"], selected["Purchasing power"], selected["Affordability opportunity"]],
-        chart_type="bar",
-    )
-    st.metric(
-        "Population growth", f"{selected['Population growth']:+.1%}",
-        "Latest annual change", delta_color="off", border=True, chart_data=population_spark, chart_type="line",
-    )
-    st.metric(
-        "Grocery sales per resident", f"${selected['Sales per capita']:,.0f}",
-        "Trailing 12 months", delta_color="off", border=True, chart_data=sales_spark, chart_type="bar",
-    )
-    st.metric(
-        "Weekly basket", f"${selected['Basket cost']:,.2f}",
-        "Latest planning basket", delta_color="off", border=True, chart_data=basket_spark, chart_type="line",
-    )
+    if viewing_all:
+        st.metric("Provinces compared", f"{len(market)}", "Comparable coverage", delta_color="off", border=True)
+        st.metric("Median opportunity score", f"{market['Opportunity score'].median():.1f}", "Across ten provinces", delta_color="off", border=True)
+        st.metric("Median population growth", f"{market['Population growth'].median():+.1%}", "Provincial median", delta_color="off", border=True)
+        st.metric("Median weekly basket", f"${market['Basket cost'].median():,.2f}", "Provincial median", delta_color="off", border=True)
+    else:
+        population_spark = frames["FactPopulation"].loc[frames["FactPopulation"]["Geography"].eq(province)].sort_values("Date").tail(8)["Population"].tolist()
+        sales_spark = frames["FactRetailSales"].loc[frames["FactRetailSales"]["Geography"].eq(province)].sort_values("Date").tail(12)["RetailSalesThousands"].tolist()
+        basket_spark = (frames["FactFoodPrices"].loc[frames["FactFoodPrices"]["Geography"].eq(province)].merge(frames["DimProduct"][["Product", "BasketWeight"]], on="Product", how="inner").assign(WeightedPrice=lambda data: data["Price"] * data["BasketWeight"]).groupby("Date", as_index=False)["WeightedPrice"].sum().sort_values("Date").tail(12)["WeightedPrice"].tolist())
+        st.metric("Opportunity score", f"{selected['Opportunity score']:.1f} / 100", f"Rank #{selected['Rank']} in Canada", delta_color="off", border=True, chart_data=[selected["Population momentum"], selected["Demand"], selected["Purchasing power"], selected["Affordability opportunity"]], chart_type="bar")
+        st.metric("Population growth", f"{selected['Population growth']:+.1%}", "Latest annual change", delta_color="off", border=True, chart_data=population_spark, chart_type="line")
+        st.metric("Grocery sales per resident", f"${selected['Sales per capita']:,.0f}", "Trailing 12 months", delta_color="off", border=True, chart_data=sales_spark, chart_type="bar")
+        st.metric("Weekly basket", f"${selected['Basket cost']:,.2f}", "Latest planning basket", delta_color="off", border=True, chart_data=basket_spark, chart_type="line")
 
 runner_up = market.iloc[1]
 score_gap = leader["Opportunity score"] - runner_up["Opportunity score"]
@@ -298,33 +282,34 @@ with map_col:
 
 with driver_col:
     with st.container(border=True, height=500):
-        st.subheader(f"Why {province} ranks #{selected['Rank']}")
-        driver_data = pd.DataFrame(
-            {
-                "Component": ["Population momentum", "Demand", "Purchasing power", "Affordability opportunity"],
-                "Score": [selected["Population momentum"], selected["Demand"], selected["Purchasing power"], selected["Affordability opportunity"]],
+        components = ["Population momentum", "Demand", "Purchasing power", "Affordability opportunity"]
+        if viewing_all:
+            st.subheader("What shapes the national ranking")
+            driver_data = market[components].mean().rename_axis("Component").reset_index(name="Score")
+            strongest_driver = driver_data.loc[driver_data["Score"].idxmax()]
+            weakest_driver = driver_data.loc[driver_data["Score"].idxmin()]
+            st.markdown(
+                f"**Strongest national signal: {strongest_driver['Component']} ({strongest_driver['Score']:.0f}/100 average).** "
+                f"**Weakest national signal: {weakest_driver['Component']} ({weakest_driver['Score']:.0f}/100 average).**"
+            )
+        else:
+            st.subheader(f"Why {province} ranks #{selected['Rank']}")
+            driver_data = pd.DataFrame({"Component": components, "Score": [selected["Population momentum"], selected["Demand"], selected["Purchasing power"], selected["Affordability opportunity"]]})
+            strongest_driver = driver_data.loc[driver_data["Score"].idxmax()]
+            weakest_driver = driver_data.loc[driver_data["Score"].idxmin()]
+            strength_context = {
+                "Population momentum": f"Annual population growth of {selected['Population growth']:+.1%} supports an expanding customer base.",
+                "Demand": f"Grocery sales of ${selected['Sales per capita']:,.0f} per resident signal comparatively strong spending.",
+                "Purchasing power": f"Median after-tax income of ${selected['Median income']:,.0f} provides stronger household spending capacity.",
+                "Affordability opportunity": f"A {selected['Basket burden']:.1%} annual basket burden creates a clear opening for a value-led offer.",
             }
-        )
-        strongest_driver = driver_data.loc[driver_data["Score"].idxmax()]
-        weakest_driver = driver_data.loc[driver_data["Score"].idxmin()]
-        strength_context = {
-            "Population momentum": f"Annual population growth of {selected['Population growth']:+.1%} supports an expanding customer base.",
-            "Demand": f"Grocery sales of ${selected['Sales per capita']:,.0f} per resident signal comparatively strong spending.",
-            "Purchasing power": f"Median after-tax income of ${selected['Median income']:,.0f} provides stronger household spending capacity.",
-            "Affordability opportunity": f"A {selected['Basket burden']:.1%} annual basket burden creates a clear opening for a value-led offer.",
-        }
-        weakness_context = {
-            "Population momentum": f"Annual population growth of {selected['Population growth']:+.1%} limits near-term customer-base expansion.",
-            "Demand": f"Grocery sales of ${selected['Sales per capita']:,.0f} per resident trail stronger markets, so revenue assumptions should stay conservative.",
-            "Purchasing power": f"Median after-tax income of ${selected['Median income']:,.0f} reduces pricing headroom and increases sensitivity to premium positioning.",
-            "Affordability opportunity": f"A {selected['Basket burden']:.1%} annual basket burden suggests less urgency for an affordability-first proposition.",
-        }
-        st.markdown(
-            f"**Strength: {strongest_driver['Component']} ({strongest_driver['Score']:.0f}/100).** "
-            f"{strength_context[strongest_driver['Component']]}\n\n"
-            f"**Constraint: {weakest_driver['Component']} ({weakest_driver['Score']:.0f}/100).** "
-            f"{weakness_context[weakest_driver['Component']]}"
-        )
+            weakness_context = {
+                "Population momentum": f"Annual population growth of {selected['Population growth']:+.1%} limits near-term customer-base expansion.",
+                "Demand": f"Grocery sales of ${selected['Sales per capita']:,.0f} per resident trail stronger markets, so revenue assumptions should stay conservative.",
+                "Purchasing power": f"Median after-tax income of ${selected['Median income']:,.0f} reduces pricing headroom and increases sensitivity to premium positioning.",
+                "Affordability opportunity": f"A {selected['Basket burden']:.1%} annual basket burden suggests less urgency for an affordability-first proposition.",
+            }
+            st.markdown(f"**Strength: {strongest_driver['Component']} ({strongest_driver['Score']:.0f}/100).** {strength_context[strongest_driver['Component']]}\n\n**Constraint: {weakest_driver['Component']} ({weakest_driver['Score']:.0f}/100).** {weakness_context[weakest_driver['Component']]}")
         driver_chart = (
             alt.Chart(driver_data)
             .mark_bar(cornerRadiusEnd=4)
@@ -376,10 +361,11 @@ with frontier_col:
         st.caption(f"**Above both medians:** {frontier_names}. These markets show the clearest combination of momentum and demand.")
 
 with pressure_col:
-    pressure, current_date, prior_date = price_pressure(frames, province)
+    pressure, current_date, prior_date = price_pressure(frames, None if viewing_all else province)
     with st.container(border=True, height=460):
         st.subheader("What changed the weekly basket?")
-        st.caption(f"Dollar impact by product in {province}, {prior_date:%b %Y} to {current_date:%b %Y}.")
+        pressure_area = "provincial average" if viewing_all else province
+        st.caption(f"Dollar impact by product for the {pressure_area}, {prior_date:%b %Y} to {current_date:%b %Y}.")
         pressure_display = pressure.head(8).copy()
         pressure_display["Product label"] = pressure_display["Product"].str.split(",").str[0]
         pressure_display["Price direction"] = np.where(
