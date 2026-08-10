@@ -17,12 +17,12 @@ DATA = ROOT / "data" / "staging"
 if not DATA.exists():
     DATA = ROOT
 
-TEAL = "#087E72"
-CORAL = "#D85C4A"
-GOLD = "#D8A13A"
-INK = "#172026"
-SLATE = "#76838A"
-GRID = "#DDD8CC"
+TEAL = "#16A36A"
+CORAL = "#FF6262"
+GOLD = "#F4B740"
+INK = "#202631"
+SLATE = "#7D8794"
+GRID = "#E6E9ED"
 
 PROVINCE_COORDS = {
     "Newfoundland and Labrador": (53.2, -60.2),
@@ -189,12 +189,39 @@ st.markdown(
     f"**{leader['Opportunity score']:.1f}/100**. Select a province to understand the trade-off between growth, demand, purchasing power and affordability pressure."
 )
 
+population_spark = frames["FactPopulation"].loc[
+    frames["FactPopulation"]["Geography"].eq(province)
+].sort_values("Date").tail(8)["Population"].tolist()
+sales_spark = frames["FactRetailSales"].loc[
+    frames["FactRetailSales"]["Geography"].eq(province)
+].sort_values("Date").tail(12)["RetailSalesThousands"].tolist()
+basket_spark = (
+    frames["FactFoodPrices"].loc[frames["FactFoodPrices"]["Geography"].eq(province)]
+    .merge(frames["DimProduct"][["Product", "BasketWeight"]], on="Product", how="inner")
+    .assign(WeightedPrice=lambda data: data["Price"] * data["BasketWeight"])
+    .groupby("Date", as_index=False)["WeightedPrice"].sum()
+    .sort_values("Date").tail(12)["WeightedPrice"].tolist()
+)
+
 with st.container(horizontal=True):
-    st.metric("Market rank", f"#{selected['Rank']} · {province}", border=True)
-    st.metric("Opportunity score", f"{selected['Opportunity score']:.1f} / 100", border=True)
-    st.metric("Population growth", f"{selected['Population growth']:+.1%}", border=True)
-    st.metric("Weekly basket", f"${selected['Basket cost']:,.2f}", border=True)
-    st.metric("Sales per capita", f"${selected['Sales per capita']:,.0f}", border=True)
+    st.metric(
+        "Opportunity score", f"{selected['Opportunity score']:.1f} / 100",
+        f"Rank #{selected['Rank']} in Canada", delta_color="off", border=True,
+        chart_data=[selected["Population momentum"], selected["Demand"], selected["Purchasing power"], selected["Affordability opportunity"]],
+        chart_type="bar",
+    )
+    st.metric(
+        "Population growth", f"{selected['Population growth']:+.1%}",
+        "Latest annual change", delta_color="off", border=True, chart_data=population_spark, chart_type="line",
+    )
+    st.metric(
+        "Grocery sales per resident", f"${selected['Sales per capita']:,.0f}",
+        "Trailing 12 months", delta_color="off", border=True, chart_data=sales_spark, chart_type="bar",
+    )
+    st.metric(
+        "Weekly basket", f"${selected['Basket cost']:,.2f}",
+        "Latest planning basket", delta_color="off", border=True, chart_data=basket_spark, chart_type="line",
+    )
 
 runner_up = market.iloc[1]
 score_gap = leader["Opportunity score"] - runner_up["Opportunity score"]
