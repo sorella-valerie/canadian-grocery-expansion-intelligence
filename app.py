@@ -233,7 +233,7 @@ st.caption(
 
 map_col, driver_col = st.columns([1.6, 1], gap="medium")
 with map_col:
-    with st.container(border=True, height=430):
+    with st.container(border=True, height=500):
         st.subheader("Expansion opportunity ranking")
         st.caption("Longer bars indicate a stronger overall fit across growth, demand, income and affordability.")
         rank_data = display_market.sort_values("Opportunity score", ascending=True).copy()
@@ -272,14 +272,33 @@ with map_col:
         st.altair_chart(ranking_chart + score_labels)
 
 with driver_col:
-    with st.container(border=True, height=430):
+    with st.container(border=True, height=500):
         st.subheader(f"Why {province} ranks #{selected['Rank']}")
-        st.caption("The tallest bar is this market's clearest advantage; the shortest is its key weakness.")
         driver_data = pd.DataFrame(
             {
                 "Component": ["Population momentum", "Demand", "Purchasing power", "Affordability opportunity"],
                 "Score": [selected["Population momentum"], selected["Demand"], selected["Purchasing power"], selected["Affordability opportunity"]],
             }
+        )
+        strongest_driver = driver_data.loc[driver_data["Score"].idxmax()]
+        weakest_driver = driver_data.loc[driver_data["Score"].idxmin()]
+        strength_context = {
+            "Population momentum": f"Annual population growth of {selected['Population growth']:+.1%} supports an expanding customer base.",
+            "Demand": f"Grocery sales of ${selected['Sales per capita']:,.0f} per resident signal comparatively strong spending.",
+            "Purchasing power": f"Median after-tax income of ${selected['Median income']:,.0f} provides stronger household spending capacity.",
+            "Affordability opportunity": f"A {selected['Basket burden']:.1%} annual basket burden creates a clear opening for a value-led offer.",
+        }
+        weakness_context = {
+            "Population momentum": f"Annual population growth of {selected['Population growth']:+.1%} limits near-term customer-base expansion.",
+            "Demand": f"Grocery sales of ${selected['Sales per capita']:,.0f} per resident trail stronger markets, so revenue assumptions should stay conservative.",
+            "Purchasing power": f"Median after-tax income of ${selected['Median income']:,.0f} reduces pricing headroom and increases sensitivity to premium positioning.",
+            "Affordability opportunity": f"A {selected['Basket burden']:.1%} annual basket burden suggests less urgency for an affordability-first proposition.",
+        }
+        st.markdown(
+            f"**Strength: {strongest_driver['Component']} ({strongest_driver['Score']:.0f}/100).** "
+            f"{strength_context[strongest_driver['Component']]}\n\n"
+            f"**Constraint: {weakest_driver['Component']} ({weakest_driver['Score']:.0f}/100).** "
+            f"{weakness_context[weakest_driver['Component']]}"
         )
         driver_chart = (
             alt.Chart(driver_data)
