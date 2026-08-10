@@ -1,0 +1,70 @@
+﻿"Cube Title","Product Id","CANSIM Id",URL,"Cube Notes","Archive Status",Frequency,"Start Reference Period","End Reference Period","Total number of dimensions"
+"Employment in non-profit institutions by activity","36100615",,"https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=3610061501",,"CURRENT - a cube available to the public and that is current","Annual","2007-01-01","2024-01-01","4",
+
+"Dimension ID","Dimension name","Dimension Notes","Dimension Definitions"
+"1","Geography",,""
+"2","Variable",,""
+"3","Sub-sector",,""
+"4","Activity",,""
+
+"Dimension ID","Member Name","Classification Code","Member ID","Parent Member ID",Terminated,"Member Notes","Member Definitions"
+"1","Canada","[11124]","1","","",,
+"1","Newfoundland and Labrador","[10]","2","1","",,
+"1","Prince Edward Island","[11]","3","1","",,
+"1","Nova Scotia","[12]","4","1","",,
+"1","New Brunswick","[13]","5","1","",,
+"1","Quebec","[24]","6","1","",,
+"1","Ontario","[35]","7","1","",,
+"1","Manitoba","[46]","8","1","",,
+"1","Saskatchewan","[47]","9","1","",,
+"1","Alberta","[48]","10","1","",,
+"1","British Columbia","[59]","11","1","",,
+"1","Yukon","[60]","12","1","",,
+"1","Northwest Territories","[61]","13","1","",,
+"1","Nunavut","[62]","14","1","",,
+"1","Outside Canada","","15","1","",1,
+"2","Employment","","1","","",,
+"3","Total non-profit institutions","","1","","",,
+"3","Total non-profit institutions less government","","2","","",,
+"4","Total activities","","1","","",,
+"4","Culture and recreation","","2","1","",,
+"4","Education and research","","3","1","",,
+"4","Health","","4","1","",,
+"4","Social services","","5","1","",,
+"4","Environment","","6","1","",,
+"4","Development and housing","","7","1","",,
+"4","Law, advocacy, and politics","","8","1","",,
+"4","Philanthropic intermediaries and voluntarism promotion","","9","1","",,
+"4","International","","10","1","",,
+"4","Religion","","11","1","",,
+"4","Business and professional associations, unions","","12","1","",,
+"4","Not elsewhere classified","","13","1","",,
+
+Symbol Legend
+Description,Symbol
+"not available for a specific reference period","..",
+"less than the limit of detection","<LOD",
+"value rounded to 0 (zero) where there is a meaningful distinction between true zero and the value that was rounded","0s",
+"data quality: excellent","A",
+"data quality: very good","B",
+"data quality: good","C",
+"data quality: acceptable","D",
+"use with caution","E",
+"too unreliable to be published","F",
+"not applicable","...",
+"preliminary","p",
+"revised","r",
+"suppressed to meet the confidentiality requirements of the Statistics Act","x",
+"terminated","t",
+
+"Survey Code","Survey Name"
+"1901","National Gross Domestic Product by Income and by Expenditure Accounts"
+"5110","Satellite Account of Non-profit Institutions and Volunteering"
+
+"Subject Code","Subject Name"
+"36","Economic accounts"
+
+"Note ID",Note
+1,"Embassies and other Canadian government offices abroad which are part of the territory of Canada."
+
+"Correction ID","Correction Date","Correction Note"

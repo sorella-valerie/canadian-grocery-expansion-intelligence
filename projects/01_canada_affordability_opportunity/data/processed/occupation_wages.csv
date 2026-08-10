@@ -1,0 +1,101 @@
+city,occupation,noc,median_annual_wage
+Vancouver,Software developer,21232,106662.0
+Calgary,Software developer,21232,94526.0
+Edmonton,Software developer,21232,94526.0
+Saskatoon,Software developer,21232,99986.0
+Winnipeg,Software developer,21232,85342.0
+Toronto,Software developer,21232,100006.0
+Ottawa,Software developer,21232,100006.0
+Montreal,Software developer,21232,94994.0
+Halifax,Software developer,21232,85010.0
+Moncton,Software developer,21232,92914.0
+Vancouver,Data analyst,21223,92217.0
+Calgary,Data analyst,21223,91645.0
+Edmonton,Data analyst,21223,91645.0
+Saskatoon,Data analyst,21223,84989.0
+Winnipeg,Data analyst,21223,84843.0
+Toronto,Data analyst,21223,88733.0
+Ottawa,Data analyst,21223,88733.0
+Montreal,Data analyst,21223,88962.0
+Halifax,Data analyst,21223,69992.0
+Moncton,Data analyst,21223,85010.0
+Vancouver,Registered nurse,31301,98883.0
+Calgary,Registered nurse,31301,99840.0
+Edmonton,Registered nurse,31301,99840.0
+Saskatoon,Registered nurse,31301,98322.0
+Winnipeg,Registered nurse,31301,89440.0
+Toronto,Registered nurse,31301,89336.0
+Ottawa,Registered nurse,31301,89336.0
+Montreal,Registered nurse,31301,83460.0
+Halifax,Registered nurse,31301,85800.0
+Moncton,Registered nurse,31301,93600.0
+Vancouver,Customer service representative,64400,46800.0
+Calgary,Customer service representative,64400,44606.0
+Edmonton,Customer service representative,64400,44606.0
+Saskatoon,Customer service representative,64400,47798.0
+Winnipeg,Customer service representative,64400,43326.0
+Toronto,Customer service representative,64400,45708.0
+Ottawa,Customer service representative,64400,45708.0
+Montreal,Customer service representative,64400,49733.0
+Halifax,Customer service representative,64400,43649.0
+Moncton,Customer service representative,64400,45760.0
+Vancouver,Accountant,11100,89638.0
+Calgary,Accountant,11100,87589.0
+Edmonton,Accountant,11100,87589.0
+Saskatoon,Accountant,11100,83980.0
+Winnipeg,Accountant,11100,72800.0
+Toronto,Accountant,11100,83751.0
+Ottawa,Accountant,11100,83751.0
+Montreal,Accountant,11100,80954.0
+Halifax,Accountant,11100,77272.0
+Moncton,Accountant,11100,76014.0
+Vancouver,Secondary school teacher,41220,92206.0
+Calgary,Secondary school teacher,41220,93330.0
+Edmonton,Secondary school teacher,41220,93330.0
+Saskatoon,Secondary school teacher,41220,91998.0
+Winnipeg,Secondary school teacher,41220,94994.0
+Toronto,Secondary school teacher,41220,100006.0
+Ottawa,Secondary school teacher,41220,100006.0
+Montreal,Secondary school teacher,41220,91998.0
+Halifax,Secondary school teacher,41220,86008.0
+Moncton,Secondary school teacher,41220,85342.0
+Vancouver,Electrician,72200,72290.0
+Calgary,Electrician,72200,77272.0
+Edmonton,Electrician,72200,77272.0
+Saskatoon,Electrician,72200,77480.0
+Winnipeg,Electrician,72200,73986.0
+Toronto,Electrician,72200,72384.0
+Ottawa,Electrician,72200,72384.0
+Montreal,Electrician,72200,85904.0
+Halifax,Electrician,72200,64480.0
+Moncton,Electrician,72200,60601.0
+Vancouver,Administrative assistant,13110,59280.0
+Calgary,Administrative assistant,13110,54974.0
+Edmonton,Administrative assistant,13110,54974.0
+Saskatoon,Administrative assistant,13110,52000.0
+Winnipeg,Administrative assistant,13110,48006.0
+Toronto,Administrative assistant,13110,55474.0
+Ottawa,Administrative assistant,13110,55474.0
+Montreal,Administrative assistant,13110,54506.0
+Halifax,Administrative assistant,13110,52000.0
+Moncton,Administrative assistant,13110,52000.0
+Vancouver,Transport truck driver,73300,67205.0
+Calgary,Transport truck driver,73300,62400.0
+Edmonton,Transport truck driver,73300,62400.0
+Saskatoon,Transport truck driver,73300,56160.0
+Winnipeg,Transport truck driver,73300,53040.0
+Toronto,Transport truck driver,73300,54080.0
+Ottawa,Transport truck driver,73300,54080.0
+Montreal,Transport truck driver,73300,52468.0
+Halifax,Transport truck driver,73300,49920.0
+Moncton,Transport truck driver,73300,47840.0
+Vancouver,Retail salesperson,64100,38938.0
+Calgary,Retail salesperson,64100,35464.0
+Edmonton,Retail salesperson,64100,35464.0
+Saskatoon,Retail salesperson,64100,33280.0
+Winnipeg,Retail salesperson,64100,34819.0
+Toronto,Retail salesperson,64100,36608.0
+Ottawa,Retail salesperson,64100,36608.0
+Montreal,Retail salesperson,64100,35880.0
+Halifax,Retail salesperson,64100,34320.0
+Moncton,Retail salesperson,64100,34320.0

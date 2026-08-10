@@ -3,6 +3,6 @@ __pycache__/
 .venv/
 work/
 outputs/
+tmp/
 .streamlit/secrets.toml
 *.pbix
-

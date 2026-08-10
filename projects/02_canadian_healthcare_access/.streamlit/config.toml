@@ -1,0 +1,39 @@
+[theme]
+base = "light"
+primaryColor = "#C65310"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#FBF3EF"
+textColor = "#141D29"
+linkColor = "#29747A"
+borderColor = "#DED9CE"
+showWidgetBorder = true
+showSidebarBorder = true
+baseRadius = "16px"
+buttonRadius = "full"
+font = "'Roboto':https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;900&display=swap"
+headingFont = "'Roboto':https://fonts.googleapis.com/css2?family=Roboto:wght@700;900&display=swap"
+baseFontSize = 15
+headingFontSizes = ["40px", "28px", "21px", "17px", "15px", "13px"]
+headingFontWeights = [900, 900, 700, 700, 600, 600]
+linkUnderline = false
+chartCategoricalColors = ["#C65310", "#29747A", "#153A47", "#52637A", "#D99A68", "#4F6972"]
+chartSequentialColors = ["#FBF3EF", "#F6E4DA", "#EBC7B0", "#D99A68", "#C87943", "#C65310", "#A9470E", "#7D4A3A", "#4F6972", "#153A47"]
+dataframeBorderColor = "#DED9CE"
+dataframeHeaderBackgroundColor = "#FBF3EF"
+
+[theme.sidebar]
+backgroundColor = "#153A47"
+secondaryBackgroundColor = "#1B2F37"
+textColor = "#FFFFFF"
+primaryColor = "#C65310"
+borderColor = "#29747A"
+
+[server]
+headless = true
+
+[client]
+toolbarMode = "minimal"
+
+[browser]
+gatherUsageStats = false
+
