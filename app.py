@@ -183,7 +183,7 @@ leader = market.iloc[0]
 
 st.caption("NORTHSTAR FOODS  /  STRATEGY & EXPANSION")
 st.title("Canadian grocery affordability & market expansion intelligence")
-st.caption("Official Statistics Canada population, grocery sales, income and food-price data—combined into an adjustable scenario score for comparing provincial opportunities.")
+st.caption("Official Statistics Canada population, grocery sales, income and food-price data, combined into an adjustable scenario score for comparing provincial opportunities.")
 st.markdown(
     f"**{leader['Geography']} leads the current expansion scenario** with an opportunity score of "
     f"**{leader['Opportunity score']:.1f}/100**. Select a province to understand the trade-off between growth, demand, purchasing power and affordability pressure."
@@ -372,11 +372,11 @@ with st.expander("Real data, methodology and limitations"):
         """
         The underlying observations are real public data. Only the basket definition and opportunity-score weights are planning assumptions.
 
-        - **Food prices — observed data:** Statistics Canada table [18-10-0245-02](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1810024502), monthly average retail prices for selected foods. The representative basket multiplies the latest provincial prices by the documented quantities in `DimProduct.csv`; it is a weekly planning basket, not an official cost-of-food measure.
-        - **Population — observed data:** Statistics Canada table [17-10-0009-01](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1710000901). Growth compares the latest quarterly estimate with the closest quarter at least one year earlier.
-        - **Grocery demand — observed data:** Statistics Canada table [20-10-0056-02](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=2010005602). Trailing 12-month retail sales are converted from thousands of dollars once, then divided by the latest population estimate.
-        - **Income — observed data:** Statistics Canada table [11-10-0091-01](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1110009101). The dashboard uses the latest annual median after-tax income; annual and quarterly snapshots are never summed across dates.
-        - **Opportunity score — scenario model:** four min-max normalized components combined using the visible sidebar weights. It is an original portfolio decision model, not a Statistics Canada indicator.
+        - **Food prices, observed data:** Statistics Canada table [18-10-0245-02](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1810024502), monthly average retail prices for selected foods. The representative basket multiplies the latest provincial prices by the documented quantities in `DimProduct.csv`; it is a weekly planning basket, not an official cost-of-food measure.
+        - **Population, observed data:** Statistics Canada table [17-10-0009-01](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1710000901). Growth compares the latest quarterly estimate with the closest quarter at least one year earlier.
+        - **Grocery demand, observed data:** Statistics Canada table [20-10-0056-02](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=2010005602). Trailing 12-month retail sales are converted from thousands of dollars once, then divided by the latest population estimate.
+        - **Income, observed data:** Statistics Canada table [11-10-0091-01](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1110009101). The dashboard uses the latest annual median after-tax income; annual and quarterly snapshots are never summed across dates.
+        - **Opportunity score, scenario model:** four min-max normalized components combined using the visible sidebar weights. It is an original portfolio decision model, not a Statistics Canada indicator.
         - **Coverage:** the ranking includes the ten provinces with comparable provincial food-price coverage. Territories are excluded from the default comparison.
         """
     )
