@@ -1,0 +1,15 @@
+Geography,ProvinceCode,Region,SortOrder
+Newfoundland and Labrador,NL,Atlantic,1
+Prince Edward Island,PE,Atlantic,2
+Nova Scotia,NS,Atlantic,3
+New Brunswick,NB,Atlantic,4
+Quebec,QC,Central,5
+Ontario,ON,Central,6
+Manitoba,MB,Prairies,7
+Saskatchewan,SK,Prairies,8
+Alberta,AB,Prairies,9
+British Columbia,BC,West Coast,10
+Yukon,YT,North,11
+Northwest Territories,NT,North,12
+Nunavut,NU,North,13
+

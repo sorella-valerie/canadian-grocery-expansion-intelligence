@@ -1,0 +1,35 @@
+[theme]
+base = "light"
+primaryColor = "#087E72"
+backgroundColor = "#F5F2EA"
+secondaryBackgroundColor = "#ECE7DC"
+textColor = "#172026"
+linkColor = "#087E72"
+borderColor = "#D5CFC2"
+showWidgetBorder = true
+showSidebarBorder = true
+baseRadius = "8px"
+buttonRadius = "8px"
+font = "'IBM Plex Sans':https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+headingFont = "'DM Serif Display':https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap"
+baseFontSize = 15
+headingFontSizes = ["38px", "26px", "21px", "17px", "15px", "13px"]
+headingFontWeights = [400, 400, 500, 600, 600, 600]
+chartCategoricalColors = ["#087E72", "#D85C4A", "#D8A13A", "#426B8A", "#76838A", "#7A5C8E"]
+chartSequentialColors = ["#F4DBD5", "#EDB9AD", "#E59785", "#D85C4A", "#C97645", "#D8A13A", "#A6A85E", "#6E9C6E", "#388E74", "#087E72"]
+dataframeBorderColor = "#D5CFC2"
+dataframeHeaderBackgroundColor = "#E7E1D5"
+
+[theme.sidebar]
+backgroundColor = "#172026"
+secondaryBackgroundColor = "#263238"
+textColor = "#F5F2EA"
+primaryColor = "#56B9AE"
+borderColor = "#35434A"
+
+[server]
+headless = true
+
+[browser]
+gatherUsageStats = false
+
