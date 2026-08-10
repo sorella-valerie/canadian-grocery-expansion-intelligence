@@ -238,17 +238,29 @@ with st.container(horizontal=True):
 
 runner_up = market.iloc[1]
 score_gap = leader["Opportunity score"] - runner_up["Opportunity score"]
+if viewing_all:
+    ranking_story = (
+        f"{leader['Geography']} leads at {leader['Opportunity score']:.1f}, followed by "
+        f"{runner_up['Geography']} at {runner_up['Opportunity score']:.1f}. The lead is {score_gap:.1f} points."
+    )
+elif selected["Rank"] == 1:
+    ranking_story = (
+        f"{province} leads at {selected['Opportunity score']:.1f}, {score_gap:.1f} points ahead of "
+        f"{runner_up['Geography']}."
+    )
+else:
+    gap_from_leader = leader["Opportunity score"] - selected["Opportunity score"]
+    ranking_story = (
+        f"{province} ranks #{selected['Rank']} with {selected['Opportunity score']:.1f} points. "
+        f"It trails {leader['Geography']} by {gap_from_leader:.1f} points."
+    )
 st.subheader("Where should Northstar expand?")
-st.caption(
-    f"{leader['Geography']} ranks first, {score_gap:.1f} points ahead of {runner_up['Geography']}. "
-    "The ranking changes when you adjust the strategy weights in the sidebar."
-)
 
 map_col, driver_col = st.columns([1.6, 1], gap="medium")
 with map_col:
     with st.container(border=True, height=500):
         st.subheader("Expansion opportunity ranking")
-        st.caption("Longer bars indicate a stronger overall fit across growth, demand, income and affordability.")
+        st.caption(ranking_story)
         rank_data = display_market.sort_values("Opportunity score", ascending=True).copy()
         rank_data["Highlight"] = np.where(
             rank_data["Geography"].eq(province),
