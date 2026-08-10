@@ -169,12 +169,19 @@ weights = {
 market, latest_food_date, latest_income_year, retail_end = build_market_scores(frames, weights)
 
 with st.sidebar:
-    province = st.selectbox("Focus province", market["Geography"], index=0)
-    comparison = st.segmented_control("Comparison", ["All provinces", "Regional peers"], default="All provinces")
-    if comparison == "Regional peers":
+    focus_choice = st.selectbox("Focus province", ["All provinces", *market["Geography"].tolist()], index=0)
+    viewing_all = focus_choice == "All provinces"
+    province = market.iloc[0]["Geography"] if viewing_all else focus_choice
+    if viewing_all:
+        comparison = "All provinces"
+        display_market = market
+        st.caption(f"National view. Detail cards use {province}, the current scenario leader.")
+    else:
+        comparison = st.segmented_control("Comparison", ["All provinces", "Regional peers"], default="All provinces")
+    if not viewing_all and comparison == "Regional peers":
         region = market.loc[market["Geography"].eq(province), "Region"].iloc[0]
         display_market = market[market["Region"].eq(region)]
-    else:
+    elif not viewing_all:
         display_market = market
     st.caption(f"Food prices: {latest_food_date:%b %Y} · Income: {latest_income_year} · Retail: trailing 12 months to {retail_end:%b %Y}")
 
@@ -184,10 +191,16 @@ leader = market.iloc[0]
 st.caption("NORTHSTAR FOODS  /  STRATEGY & EXPANSION")
 st.title("Canadian grocery affordability & market expansion intelligence")
 st.caption("Official Statistics Canada population, grocery sales, income and food-price data, combined into an adjustable scenario score for comparing provincial opportunities.")
-st.markdown(
-    f"**{leader['Geography']} leads the current expansion scenario** with an opportunity score of "
-    f"**{leader['Opportunity score']:.1f}/100**. Select a province to understand the trade-off between growth, demand, purchasing power and affordability pressure."
-)
+if viewing_all:
+    st.markdown(
+        f"**{leader['Geography']} leads the current expansion scenario** with an opportunity score of "
+        f"**{leader['Opportunity score']:.1f}/100**. The national view compares all ten provinces, while the detail cards explain the current leader."
+    )
+else:
+    st.markdown(
+        f"**{leader['Geography']} leads the current expansion scenario** with an opportunity score of "
+        f"**{leader['Opportunity score']:.1f}/100**. The detail cards below explain {province}'s strengths, constraints and affordability pressure."
+    )
 
 population_spark = frames["FactPopulation"].loc[
     frames["FactPopulation"]["Geography"].eq(province)
