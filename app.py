@@ -14,6 +14,8 @@ st.set_page_config(
 
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data" / "staging"
+if not DATA.exists():
+    DATA = ROOT
 
 TEAL = "#087E72"
 CORAL = "#D85C4A"
