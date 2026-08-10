@@ -244,8 +244,6 @@ with driver_col:
             .properties(height=220)
         )
         st.altair_chart(driver_chart)
-        strengths = driver_data.sort_values("Score", ascending=False)["Component"].tolist()
-        st.info(f"**Decision read:** {strengths[0]} is the strongest reason to enter. {strengths[-1]} is the main constraint to mitigate.", icon=":material/lightbulb:")
 
 frontier_col, pressure_col = st.columns([1.35, 1], gap="medium")
 with frontier_col:
