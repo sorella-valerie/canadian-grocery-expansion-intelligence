@@ -249,8 +249,8 @@ with driver_col:
 frontier_col, pressure_col = st.columns([1.35, 1], gap="medium")
 with frontier_col:
     with st.container(border=True, height=460):
-        st.subheader("Market frontier: growth versus grocery demand")
-        st.caption("Upper-right provinces combine population momentum with stronger retail demand. Bubble size shows population; colour shows affordability pressure.")
+        st.subheader("Which provinces combine fast growth with strong grocery spending?")
+        st.caption("Each bubble is a province. Move right for faster population growth and up for more grocery spending per resident. The upper-right quadrant is the strongest expansion position.")
         scatter = (
             alt.Chart(display_market)
             .mark_circle(opacity=0.82, stroke="white", strokeWidth=1.5)
@@ -269,7 +269,11 @@ with frontier_col:
             .properties(height=320)
         )
         labels = alt.Chart(display_market).mark_text(dy=-13, fontSize=11, color=INK).encode(x="Population growth:Q", y="Sales per capita:Q", text="ProvinceCode:N")
-        st.altair_chart(scatter + labels)
+        median_growth = float(display_market["Population growth"].median())
+        median_demand = float(display_market["Sales per capita"].median())
+        growth_rule = alt.Chart(pd.DataFrame({"Population growth": [median_growth]})).mark_rule(color=SLATE, strokeDash=[5, 5], opacity=0.65).encode(x="Population growth:Q")
+        demand_rule = alt.Chart(pd.DataFrame({"Sales per capita": [median_demand]})).mark_rule(color=SLATE, strokeDash=[5, 5], opacity=0.65).encode(y="Sales per capita:Q")
+        st.altair_chart(scatter + growth_rule + demand_rule + labels)
 
 with pressure_col:
     pressure, current_date, prior_date = price_pressure(frames, province)
