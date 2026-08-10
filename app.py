@@ -17,12 +17,12 @@ DATA = ROOT / "data" / "staging"
 if not DATA.exists():
     DATA = ROOT
 
-TEAL = "#16A36A"
-CORAL = "#FF6262"
-GOLD = "#F4B740"
-INK = "#202631"
-SLATE = "#7D8794"
-GRID = "#E6E9ED"
+TEAL = "#153A47"
+CORAL = "#C65310"
+GOLD = "#D99A68"
+INK = "#141D29"
+SLATE = "#78909C"
+GRID = "#E3E9EB"
 
 PROVINCE_COORDS = {
     "Newfoundland and Labrador": (53.2, -60.2),
@@ -300,8 +300,8 @@ st.caption("A strong market needs both customer growth and grocery spending, wit
 frontier_col, pressure_col = st.columns([1.15, 1], gap="medium")
 with frontier_col:
     with st.container(border=True, height=460):
-        st.subheader("Growth and grocery demand")
-        st.caption("The strongest expansion signals sit above and to the right of the dashed provincial medians.")
+        st.subheader("Market momentum across Canada")
+        st.caption("Bubble size shows grocery sales per resident. Orange marks provinces above both the growth and demand medians.")
         median_growth = float(display_market["Population growth"].median())
         median_demand = float(display_market["Sales per capita"].median())
         frontier_data = display_market.copy()
@@ -311,35 +311,21 @@ with frontier_col:
             "High growth + high demand",
             "Other provinces",
         )
-        scatter = (
-            alt.Chart(frontier_data)
-            .mark_circle(size=150, opacity=0.95, stroke="white", strokeWidth=2)
-            .encode(
-                x=alt.X("Population growth:Q", axis=alt.Axis(format=".1%"), title="Annual population growth →"),
-                y=alt.Y("Sales per capita:Q", axis=alt.Axis(format="$,.0f"), title="Grocery sales per resident →"),
-                color=alt.Color(
-                    "Market position:N",
-                    scale=alt.Scale(
-                        domain=["High growth + high demand", "Other provinces"],
-                        range=[TEAL, "#A9B2B0"],
-                    ),
-                    legend=alt.Legend(title=None, orient="bottom"),
-                ),
-                tooltip=[
-                    alt.Tooltip("Geography:N", title="Province"),
-                    alt.Tooltip("Population growth:Q", title="Annual growth", format=".1%"),
-                    alt.Tooltip("Sales per capita:Q", title="Sales per resident", format="$,.0f"),
-                    alt.Tooltip("Market position:N", title="Signal"),
-                ],
-            )
-            .properties(height=300)
+        frontier_data["Map size"] = 65000 + 340000 * (
+            frontier_data["Sales per capita"] / frontier_data["Sales per capita"].max()
         )
-        labels = alt.Chart(frontier_data).mark_text(dy=-13, fontSize=11, fontWeight=600, color=INK).encode(
-            x="Population growth:Q", y="Sales per capita:Q", text="ProvinceCode:N"
+        frontier_data["Map color"] = np.where(
+            frontier_data["Market position"].eq("High growth + high demand"), CORAL, TEAL
         )
-        growth_rule = alt.Chart(pd.DataFrame({"Population growth": [median_growth]})).mark_rule(color=SLATE, strokeDash=[5, 5], opacity=0.65).encode(x="Population growth:Q")
-        demand_rule = alt.Chart(pd.DataFrame({"Sales per capita": [median_demand]})).mark_rule(color=SLATE, strokeDash=[5, 5], opacity=0.65).encode(y="Sales per capita:Q")
-        st.altair_chart(scatter + growth_rule + demand_rule + labels)
+        st.map(
+            frontier_data,
+            latitude="Latitude",
+            longitude="Longitude",
+            size="Map size",
+            color="Map color",
+            zoom=2,
+            height=300,
+        )
         frontier_names = ", ".join(
             frontier_data.loc[frontier_data["Market position"].eq("High growth + high demand"), "ProvinceCode"]
         )

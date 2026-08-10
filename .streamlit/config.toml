@@ -1,31 +1,31 @@
 [theme]
 base = "light"
-primaryColor = "#16A36A"
+primaryColor = "#C65310"
 backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F4F6F8"
-textColor = "#202631"
-linkColor = "#16845A"
-borderColor = "#E1E5E9"
+secondaryBackgroundColor = "#F4F7F8"
+textColor = "#141D29"
+linkColor = "#153A47"
+borderColor = "#DCE3E6"
 showWidgetBorder = true
 showSidebarBorder = true
 baseRadius = "12px"
 buttonRadius = "10px"
-font = "'Inter':https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-headingFont = "'Inter':https://fonts.googleapis.com/css2?family=Inter:wght@600;700&display=swap"
+font = "'Roboto':https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;900&display=swap"
+headingFont = "'Roboto':https://fonts.googleapis.com/css2?family=Roboto:wght@700;900&display=swap"
 baseFontSize = 15
 headingFontSizes = ["38px", "26px", "21px", "17px", "15px", "13px"]
 headingFontWeights = [700, 700, 700, 600, 600, 600]
-chartCategoricalColors = ["#16A36A", "#FF6262", "#4E7BD9", "#F4B740", "#7D8794", "#8B67C8"]
-chartSequentialColors = ["#EAF7F1", "#D2EFE2", "#B6E5D1", "#8ED5B9", "#64C39D", "#3DB281", "#16A36A", "#128A5A", "#0D7049", "#09583A"]
+chartCategoricalColors = ["#C65310", "#153A47", "#5F8792", "#D99A68", "#78909C", "#AABBC1"]
+chartSequentialColors = ["#F7EEE8", "#F2DCCE", "#EBC7B0", "#E2AD8A", "#D88F61", "#CE7137", "#C65310", "#A9470E", "#87390B", "#672B08"]
 dataframeBorderColor = "#E1E5E9"
 dataframeHeaderBackgroundColor = "#F4F6F8"
 
 [theme.sidebar]
-backgroundColor = "#202B3C"
-secondaryBackgroundColor = "#303C4F"
+backgroundColor = "#153A47"
+secondaryBackgroundColor = "#214B59"
 textColor = "#F7F9FB"
-primaryColor = "#38C98B"
-borderColor = "#3B485B"
+primaryColor = "#E26C22"
+borderColor = "#315866"
 
 [server]
 headless = true
